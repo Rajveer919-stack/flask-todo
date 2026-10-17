@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My To-Do List</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: 40px auto; padding: 0 15px; }
+    form { display: flex; gap: 8px; margin-bottom: 20px; }
+    input[type="text"] { flex: 1; padding: 8px; }
+    button { padding: 8px 14px; cursor: pointer; }
+    li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #ddd; }
+    .done { text-decoration: line-through; color: gray; }
+    a { margin-left: 8px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>My To-Do List</h1>
+  <p>Hello, {{ username }} | <a href="/logout">Logout</a></p>
+
+  <!-- Naya task add karne ka form -->
+  <form action="/add" method="POST">
+    <input type="text" name="title" placeholder="Naya task likho" required>
+    <button type="submit">Add</button>
+  </form>
+
+  <!-- Tasks ki list (Jinja loop) -->
+  <ul style="list-style: none; padding: 0;">
+    {% for task in tasks %}
+      <li>
+        <span class="{{ 'done' if task['done'] else '' }}">{{ task['title'] }}</span>
+        <span>
+          <a href="/toggle/{{ task['id'] }}">✔</a>
+          <a href="/delete/{{ task['id'] }}">❌</a>
+        </span>
+      </li>
+    {% else %}
+      <li>Abhi koi task nahi hai.</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

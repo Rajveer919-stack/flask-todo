@@ -1,0 +1,10 @@
+# Database (users ka data upload nahi karna)
+todo.db
+
+# Python ki temporary files
+__pycache__/
+*.pyc
+
+# Virtual environment (agar banao)
+venv/
+.env
