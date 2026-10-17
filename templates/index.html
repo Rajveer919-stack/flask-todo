@@ -18,13 +18,13 @@
   <h1>My To-Do List</h1>
   <p>Hello, {{ username }} | <a href="/logout">Logout</a></p>
 
-  <!-- Naya task add karne ka form -->
+  <!-- Form to add a new task -->
   <form action="/add" method="POST">
-    <input type="text" name="title" placeholder="Naya task likho" required>
+    <input type="text" name="title" placeholder="Write a new task" required>
     <button type="submit">Add</button>
   </form>
 
-  <!-- Tasks ki list (Jinja loop) -->
+  <!-- List of tasks (Jinja loop) -->
   <ul style="list-style: none; padding: 0;">
     {% for task in tasks %}
       <li>
@@ -35,7 +35,7 @@
         </span>
       </li>
     {% else %}
-      <li>Abhi koi task nahi hai.</li>
+      <li>No tasks yet.</li>
     {% endfor %}
   </ul>
 </body>

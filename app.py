@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# Session ko safe rakhne ki secret key (asli deploy mein environment variable se aani chahiye)
+# Secret key keeps sessions safe (in real deployment it should come from an environment variable)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-only-change-me")
 DB_NAME = "todo.db"
 
@@ -20,7 +20,7 @@ def get_db():
 
 def init_db():
     conn = get_db()
-    # users table: username unique hoga
+    # users table: username must be unique
     conn.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +28,7 @@ def init_db():
             password TEXT NOT NULL
         )
     """)
-    # tasks table: har task kisi user ka hai (user_id)
+    # tasks table: every task belongs to a user (user_id)
     conn.execute("""
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,7 +41,7 @@ def init_db():
     conn.close()
 
 
-# ========== 2. HOME PAGE (sirf login wale user ke liye) ==========
+# ========== 2. HOME PAGE (only for logged-in users) ==========
 @app.route("/")
 def home():
     if "user_id" not in session:
@@ -63,10 +63,10 @@ def register():
         password = request.form["password"]
 
         if not username or len(password) < 6:
-            flash("Username likho aur password kam se kam 6 character ka rakho.")
+            flash("Enter a username and a password of at least 6 characters.")
             return redirect("/register")
 
-        # Password seedha save nahi karte, hash banake save karte hain
+        # Never store the password directly, store its hash
         hashed = generate_password_hash(password)
 
         try:
@@ -78,10 +78,10 @@ def register():
             conn.commit()
             conn.close()
         except sqlite3.IntegrityError:
-            flash("Ye username pehle se liya hua hai.")
+            flash("This username is already taken.")
             return redirect("/register")
 
-        flash("Account ban gaya! Ab login karo.")
+        flash("Account created! Please log in.")
         return redirect("/login")
 
     return render_template("register.html")
@@ -100,13 +100,13 @@ def login():
         ).fetchone()
         conn.close()
 
-        # Hash se password match karo
+        # Compare the password with the stored hash
         if user and check_password_hash(user["password"], password):
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             return redirect("/")
 
-        flash("Username ya password galat hai.")
+        flash("Wrong username or password.")
         return redirect("/login")
 
     return render_template("login.html")
@@ -119,7 +119,7 @@ def logout():
     return redirect("/login")
 
 
-# ========== 6. TASK ADD ==========
+# ========== 6. ADD A TASK ==========
 @app.route("/add", methods=["POST"])
 def add():
     if "user_id" not in session:
@@ -137,7 +137,7 @@ def add():
     return redirect("/")
 
 
-# ========== 7. TASK DONE / UNDONE (sirf apna task) ==========
+# ========== 7. MARK A TASK DONE / UNDONE (own tasks only) ==========
 @app.route("/toggle/<int:task_id>")
 def toggle(task_id):
     if "user_id" not in session:
@@ -153,7 +153,7 @@ def toggle(task_id):
     return redirect("/")
 
 
-# ========== 8. TASK DELETE (sirf apna task) ==========
+# ========== 8. DELETE A TASK (own tasks only) ==========
 @app.route("/delete/<int:task_id>")
 def delete(task_id):
     if "user_id" not in session:
@@ -169,7 +169,7 @@ def delete(task_id):
     return redirect("/")
 
 
-# ========== 9. APP CHALANA ==========
+# ========== 9. RUN THE APP ==========
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)

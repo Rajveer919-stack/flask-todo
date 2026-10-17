@@ -1,25 +1,20 @@
 # Flask To-Do App
 
-Flask aur SQLite se bana web app jisme user register/login karke apne personal tasks manage kar sakta hai.
+A Flask web app where each user registers, logs in and manages a private to-do list.
 
 ## Features
-- User registration aur login/logout
-- Password hash karke save hota hai (werkzeug)
-- Task add, complete/undo aur delete
-- Har user ko sirf apne tasks dikhte hain
+- User registration, login and logout
+- Passwords stored as hashes
+- Add, complete and delete tasks
+- Each user sees only their own tasks
 
-## Kaise chalayein
-1. Python install hona chahiye
-2. Library install karo: `pip install -r requirements.txt`
-3. Chalao: `python app.py`
-4. Browser mein kholo: `http://127.0.0.1:5000`
-5. Pehle `/register` par account banao, phir login karo
+## How to run
+1. Install dependencies: `pip install -r requirements.txt`
+2. Run: `python app.py`
+3. Open `http://127.0.0.1:5000/register` and create an account
 
-## Tech Used
-- Python, Flask
-- SQLite
-- HTML, CSS, Jinja2 templates
-- Session based authentication
+## Tech used
+Python, Flask, SQLite, Jinja2, HTML, CSS
 
 ## Author
 Rajveer Vishwakarma
